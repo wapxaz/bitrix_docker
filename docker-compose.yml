@@ -1,0 +1,104 @@
+version: '3.8'
+
+networks:
+  bitrixdock:
+    driver: bridge
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      # Прокинутый порт в свою локальную систему (в контейнерах использовать 80)
+      - ${PORT_NGINX_LOCAL}:80
+    volumes:
+      # Брать файл конфигурации nginx из своей файловой системы (ro - read only)
+      #- ./config/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./config/nginx/conf.d/nginx.conf:/etc/nginx/nginx.conf
+      # Общая папка проекта в своей файловой системе
+      - ${SITE_LOCAL_PATH}:${SITE_PATH}
+    environment:
+      - GLOBAL_DOMAIN=${GLOBAL_DOMAIN}
+      - PORT_NGINX_LOCAL=${PORT_NGINX_LOCAL}
+    # Зависимости контейнера
+    # При запуске контейнера, автоматически будут запущены контейнеры apache, mysql, phpmyadmin, php 
+    depends_on:
+      - apache
+      - mysql
+      - phpmyadmin
+      - php
+    networks:
+      - bitrixdock
+
+  apache:
+    image: httpd:2.4
+    ports:
+      - 8080:8080
+    volumes:
+      # Общая папка проекта в своей файловой системе
+      - ${SITE_LOCAL_PATH}:${SITE_PATH}
+      # Файл конфигурации apache
+      - ./config/apache2/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    depends_on:
+      - php
+    networks:
+      - bitrixdock
+
+  php:
+    build:
+      context: dockerfiles
+      dockerfile: php.Dockerfile
+    volumes:
+      # Общая папка проекта в своей файловой системе
+      - ${SITE_LOCAL_PATH}:${SITE_PATH}
+      # Файл конфигурации php
+      - ./config/php/php.ini:/usr/local/etc/php/php.ini
+      # Файл конфигурации xdebug
+      - ./config/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      # Сохранение файлов сессий в своей файловой системе
+      - ./dbdata/sessions/:/var/bitrix/sessions/
+    #extra_hosts:
+    #  - "${GLOBAL_DOMAIN}:172.17.0.1"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bitrixdock
+
+  mysql:
+    platform: linux/x86_64
+    image: mysql:5.7
+    ports:
+      # Прокинутый порт в свою локальную систему (в контейнерах использовать 3306)
+      - ${PORT_MYSQL_LOCAL}:3306
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      TZ: Europe/Moscow
+    command: --sql_mode=''
+    volumes:
+      # Записывать данные базы данных в свою файловую систему для сохранения
+      - ./dbdata/mysql:/var/lib/mysql
+    networks:
+      - bitrixdock
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  #----------------------- Административные контейнеры -----------------------
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.0
+    restart: always
+    ports:
+      # Прокинутый порт в свою локальную систему (в контейнерах использовать 80)
+      - ${PORT_PHPMYADMIN_LOCAL}:80
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      - mysql
+    networks:
+      - bitrixdock
