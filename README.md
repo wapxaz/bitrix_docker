@@ -2,6 +2,8 @@
 
 ![1c_bitrix_logo.svg.png](info%2Fimg%2F1c_bitrix_logo.svg.png)
 
+Готовая среда для разработки под битрикс, поднимается за 5 минут через докер.
+
 # По умолчанию настроены
 * php - 7.2.32-fpm ( другие версии php в папке dockerfiles )
 * mysql - 5.7
