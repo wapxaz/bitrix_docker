@@ -2,8 +2,9 @@ FROM php:7.4-fpm-alpine
 
 WORKDIR /var/www/html
 
-# Setup GD extension
+
 RUN apk add --no-cache \
+    $PHPIZE_DEPS \
     freetype \
     libjpeg-turbo \
     libpng \
@@ -25,3 +26,7 @@ RUN apk add --no-cache \
 RUN apk add libzip-dev
 
 RUN docker-php-ext-install pdo pdo_mysql mysqli zip bcmath
+
+#xdebug
+RUN pecl install xdebug-3.1.5 \
+    && docker-php-ext-enable xdebug

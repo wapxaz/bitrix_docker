@@ -88,4 +88,18 @@
 `chmod -R 777 src`
 
 ### xdebug
-xdebug - не донастроен(не отрабатывают брейкпоинты), как будет время доразобраться и выгрузить в гит
+Конфигурация .vscode/launch.json :
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "XDebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9003,
+            "pathMappings": {
+                "/var/www/bitrix/public": "${workspaceRoot}/src/public"
+            }
+        }
+    ]
+}
