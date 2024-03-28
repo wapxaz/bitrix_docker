@@ -46,7 +46,8 @@ services:
   php:
     build:
       context: dockerfiles
-      dockerfile: php.Dockerfile
+      # доступны версии: 7_2, 7_4, 8_0, 8_2 (для смены поменяй ниже цифры версии на нужные)
+      dockerfile: php7_4.Dockerfile
     volumes:
       # Общая папка проекта в своей файловой системе
       - ${SITE_LOCAL_PATH}:${SITE_PATH}
