@@ -88,18 +88,4 @@
 `chmod -R 777 src`
 
 ### xdebug
-Конфигурация .vscode/launch.json :
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "XDebug",
-            "type": "php",
-            "request": "launch",
-            "port": 9003,
-            "pathMappings": {
-                "/var/www/bitrix/public": "${workspaceRoot}/src/public"
-            }
-        }
-    ]
-}
+Конфигурация для VS Code находится в .vscode/launch.json
