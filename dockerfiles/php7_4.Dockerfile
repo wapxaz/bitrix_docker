@@ -1,7 +1,6 @@
 FROM php:7.4-fpm-alpine
 
-WORKDIR /var/www/html
-
+WORKDIR ${SITE_PATH}
 
 RUN apk add --no-cache \
     $PHPIZE_DEPS \
@@ -30,3 +29,8 @@ RUN docker-php-ext-install pdo pdo_mysql mysqli zip bcmath
 #xdebug
 RUN pecl install xdebug-3.1.5 \
     && docker-php-ext-enable xdebug
+
+# Install Composer
+RUN echo "Install Composer"
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer --version

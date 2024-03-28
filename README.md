@@ -5,7 +5,7 @@
 Готовая среда для разработки под битрикс, поднимается за 5 минут через докер.
 
 # По умолчанию настроены
-* php - 7.4.33 (поменять версию можно в docker-compose.yml, хранятся они в папке dockerfiles)
+* php - 8.2 (поменять версию можно в docker-compose.yml, хранятся они в папке dockerfiles)
 * mysql - 5.7
 * nginx - stable-alpine
 * apache - httpd:2.4

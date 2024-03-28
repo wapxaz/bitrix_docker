@@ -1,5 +1,7 @@
 FROM php:7.2.32-fpm
 
+WORKDIR ${SITE_PATH}
+
 # install git
 RUN apt-get update && \
     apt-get install -y --no-install-recommends git
@@ -49,8 +51,8 @@ RUN pecl install mcrypt-1.0.3
 RUN docker-php-ext-enable mcrypt
 
 # xdebug
-#RUN pecl install xdebug-3.1.5 \
-#    && docker-php-ext-enable xdebug
+RUN pecl install xdebug-3.1.5 \
+    && docker-php-ext-enable xdebug
 
 # gd
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \

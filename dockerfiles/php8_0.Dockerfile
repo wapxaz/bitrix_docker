@@ -3,6 +3,8 @@ FROM php:8.0-fpm
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
 
+WORKDIR ${SITE_PATH}
+
 #
 #--------------------------------------------------------------------------
 # Software's Installation
@@ -46,3 +48,12 @@ RUN set -eux; \
     --with-freetype; \
     docker-php-ext-install gd; \
     php -r 'var_dump(gd_info());'
+
+#xdebug
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+# Install Composer
+RUN echo "Install Composer"
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer --version
