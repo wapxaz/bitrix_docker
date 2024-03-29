@@ -28,6 +28,7 @@ services:
       - php
     networks:
       - bitrixdock
+    restart: unless-stopped
 
   apache:
     image: httpd:2.4
@@ -42,6 +43,7 @@ services:
       - php
     networks:
       - bitrixdock
+    restart: unless-stopped
 
   php:
     build:
@@ -61,6 +63,7 @@ services:
       - "host.docker.internal:host-gateway"
     networks:
       - bitrixdock
+    restart: unless-stopped
 
   mysql:
     platform: linux/x86_64
@@ -88,7 +91,6 @@ services:
 
   phpmyadmin:
     image: phpmyadmin:5.2.0
-    restart: always
     ports:
       # Прокинутый порт в свою локальную систему (в контейнерах использовать 80)
       - ${PORT_PHPMYADMIN_LOCAL}:80
@@ -101,3 +103,4 @@ services:
       - mysql
     networks:
       - bitrixdock
+    restart: unless-stopped
